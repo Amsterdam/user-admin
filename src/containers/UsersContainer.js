@@ -1,4 +1,7 @@
+import React from 'react'
 import { connect } from 'react-redux'
+
+import AddUser from './AddUser'
 import UserList from '../components/UserList'
 
 const getActiveUsers = (users, filter) => {
@@ -24,9 +27,14 @@ const mapDispatchToProps = {
   }
 }
 
-const UsersContainer = connect(
+const UsersContainer = (props) => (
+  <section>
+    <AddUser />
+    <UserList users={props.users} onUserClick={() => {}} />
+  </section>
+)
+
+export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UserList)
-
-export default UsersContainer
+)(UsersContainer)
