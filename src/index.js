@@ -7,7 +7,7 @@ import createHistory from 'history/createBrowserHistory'
 import { ConnectedRouter, routerMiddleware } from 'react-router-redux'
 
 import reducers from './reducers'
-import App from './components/App'
+import App from './components/App.jsx'
 
 const history = createHistory()
 const router = routerMiddleware(history)
