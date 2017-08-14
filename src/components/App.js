@@ -1,13 +1,17 @@
 import React from 'react'
 import { Route } from 'react-router'
+import { Container } from 'semantic-ui-react'
 
-import Footer from './Footer'
+import Header from '../components/Header'
 import UsersContainer from '../containers/UsersContainer'
 
 const App = () => (
   <div>
-    <Route exact path="/" component={UsersContainer}/>
-    <Footer />
+    <Header />
+    <Container style={{ marginTop: '7em' }}>
+      <Route exact path="/" component={UsersContainer}/>
+      <Route exact path="/users" component={UsersContainer}/>
+    </Container>
   </div>
 )
 
