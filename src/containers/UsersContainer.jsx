@@ -18,8 +18,8 @@ const getActiveUsers = (users, filter) => {
   }
 }
 
-const mapStateToProps = (state) => ({
-  user: state.users.find(user => user.id === Number(state.router.location.pathname.split('/').pop())),
+const mapStateToProps = (state, ownProps) => ({
+  user: state.users.find(user => user.id === Number(ownProps.match.params.id)),
   users: getActiveUsers(state.users, state.visibilityFilter)
 })
 

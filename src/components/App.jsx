@@ -10,7 +10,7 @@ const App = () => (
     <Header />
     <Container style={{ marginTop: '7em' }}>
       <Route exact path="/" component={UsersContainer} />
-      <Route path="/users" component={UsersContainer} />
+      <Route exact path="/users/:id?" component={UsersContainer} />
     </Container>
   </div>
 )
