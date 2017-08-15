@@ -9,8 +9,8 @@ const App = () => (
   <div>
     <Header />
     <Container style={{ marginTop: '7em' }}>
-      <Route exact path="/" component={UsersContainer}/>
-      <Route exact path="/users" component={UsersContainer}/>
+      <Route exact path="/" component={UsersContainer} />
+      <Route path="/users" component={UsersContainer} />
     </Container>
   </div>
 )

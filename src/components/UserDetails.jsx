@@ -1,10 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { NavLink } from 'react-router-dom'
 
 import FilterLink from '../containers/FilterLink'
 
-const UserList = ({ users, onUserClick }) => (
+const UserDetail = ({ user }) => (
   <section>
     <aside>
       Show:
@@ -21,25 +20,24 @@ const UserList = ({ users, onUserClick }) => (
         Inactive
       </FilterLink>
     </aside>
-    <ul>
-      {users.map(user => (
-        <li key={user.id}>
-          <NavLink to={`/users/${user.id}`}>
-            {user.name} | {user.emailAddress}
-          </NavLink>
-        </li>
-      ))}
-    </ul>
+    <dl>
+      <dt>ID:</dt>
+      <dd>{user.id}</dd>
+      <dt>Name:</dt>
+      <dd>{user.name}</dd>
+      <dt>E-mailadres:</dt>
+      <dd>{user.emailAddress}</dd>
+    </dl>
   </section>
 )
 
-UserList.propTypes = {
-  users: PropTypes.arrayOf(PropTypes.shape({
+UserDetail.propTypes = {
+  user: PropTypes.shape({
     id: PropTypes.number.isRequired,
     emailAddress: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  }).isRequired,
   onUserClick: PropTypes.func
 }
 
-export default UserList
+export default UserDetail

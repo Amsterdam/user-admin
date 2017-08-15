@@ -1,8 +1,9 @@
 import React from 'react'
+import { Route } from 'react-router'
 import { connect } from 'react-redux'
 
-import AddUser from './AddUser'
 import UserList from '../components/UserList'
+import UserDetails from '../components/UserDetails'
 
 const getActiveUsers = (users, filter) => {
   switch (filter) {
@@ -18,6 +19,7 @@ const getActiveUsers = (users, filter) => {
 }
 
 const mapStateToProps = (state) => ({
+  user: state.users.find(user => user.id === Number(state.router.location.pathname.split('/').pop())),
   users: getActiveUsers(state.users, state.visibilityFilter)
 })
 
@@ -29,8 +31,12 @@ const mapDispatchToProps = {
 
 const UsersContainer = (props) => (
   <section>
-    <AddUser />
-    <UserList users={props.users} onUserClick={() => {}} />
+    <Route exact path="/users" render={() => (
+      <UserList users={props.users} />
+    )} />
+    <Route exact path="/users/:id" render={() => (
+      <UserDetails user={props.user} />
+    )} />
   </section>
 )
 
