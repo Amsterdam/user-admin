@@ -21,15 +21,47 @@ const UserList = ({ users, onUserClick }) => (
         Inactive
       </FilterLink>
     </aside>
-    <ul>
-      {users.map(user => (
-        <li key={user.id}>
-          <NavLink to={`/users/${user.id}`}>
-            {user.name} | {user.emailAddress}
-          </NavLink>
-        </li>
-      ))}
-    </ul>
+    <table className="ui celled table">
+      <thead>
+        <tr>
+          <th>Naam</th>
+          <th>E-mailadres</th>
+          <th>Rollen</th>
+          <th>Actief</th>
+        </tr>
+      </thead>
+      <tbody>
+        {users.map(user => (
+          <tr key={user.id}>
+            <td>
+              <NavLink
+                  to={`/users/${user.id}`}
+                  style={{ display: 'block' }}
+              >
+                {user.name}
+              </NavLink>
+            </td>
+            <td>
+              <NavLink
+                  to={`/users/${user.id}`}
+                  style={{ display: 'block' }}
+              >
+                {user.emailAddress}
+              </NavLink>
+            </td>
+            <td>Geen</td>
+            <td>
+              <NavLink
+                  to={`/users/${user.id}`}
+                  style={{ display: 'block' }}
+              >
+                {user.active ? 'Actief' : 'Inactief'}
+              </NavLink>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   </section>
 )
 

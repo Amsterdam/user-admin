@@ -18,15 +18,17 @@ const getActiveUsers = (users, filter) => {
   }
 }
 
+const selectUser = (users, userId) => {
+  return users.find(user => user.id === userId)
+}
+
 const mapStateToProps = (state, ownProps) => ({
-  user: state.users.find(user => user.id === Number(ownProps.match.params.id)),
+  user: selectUser(state.users, Number(ownProps.match.params.id)),
   users: getActiveUsers(state.users, state.visibilityFilter)
 })
 
 const mapDispatchToProps = {
-  onUserClick: (user) => {
-    console.log(user);
-  }
+  onUserClick: (user) => selectUser(user.id)
 }
 
 const UsersContainer = (props) => (
@@ -35,7 +37,7 @@ const UsersContainer = (props) => (
       <UserList users={props.users} />
     )} />
     <Route exact path="/users/:id" render={() => (
-      <UserDetails user={props.user} />
+      <UserDetails user={props.user} onUserClick={props.onUserClick} />
     )} />
   </section>
 )
