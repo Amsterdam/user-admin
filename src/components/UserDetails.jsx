@@ -6,13 +6,16 @@ class UserDetail extends React.Component {
   constructor(props) {
     super(props)
 
+    const user = props.user || {}
+
     // NB: Setting state of nested objects, i.e. `{ user: { name: '' } }`, is not supported
     this.state = {
-      active: String(props.user.active) || 'true',
-      emailAddress: props.user.emailAddress || '',
-      medewerker: props.user.medewerker || false,
-      name: props.user.name || '',
-      speciaal_bevoegd: props.user.speciaal_bevoegd || false,
+      active: String(user.active) || 'false',
+      emailAddress: user.emailAddress || '',
+      id: user.id >= 0 ? user.id : null,
+      medewerker: user.medewerker || false,
+      name: user.name || '',
+      speciaal_bevoegd: user.speciaal_bevoegd || false,
     }
   }
 
@@ -23,9 +26,21 @@ class UserDetail extends React.Component {
     })
   }
 
+  handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (this.props.onCreate) {
+      this.props.onCreate(this.state)
+    }
+
+    if (this.props.onUpdate) {
+      this.props.onUpdate(this.state)
+    }
+  }
+
   render() {
     return (
-      <Form>
+      <Form onSubmit={this.handleSubmit}>
         <Form.Group widths="equal">
           <Form.Input
               label="Naam"
@@ -87,9 +102,13 @@ UserDetail.propTypes = {
     name: PropTypes.string.isRequired,
     speciaal_bevoegd: PropTypes.bool,
     medewerker: PropTypes.bool,
-    active: PropTypes.bool.isRequired
+    active: PropTypes.oneOfType([
+      PropTypes.bool,
+      PropTypes.string
+    ]).isRequired
   }),
-  onUserClick: PropTypes.func.isRequired
+  onCreate: PropTypes.func,
+  onUpdate: PropTypes.func
 }
 
 export default UserDetail

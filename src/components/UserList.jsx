@@ -1,12 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { NavLink } from 'react-router-dom'
+import { Button } from 'semantic-ui-react'
 
 import FilterLink from '../containers/FilterLink'
 
 const UserList = ({ users, onUserClick }) => (
   <section>
-    <aside>
+    <aside style={{ float: 'left' }}>
       Show:
       {" "}
       <FilterLink filter="SHOW_ALL">
@@ -21,6 +22,13 @@ const UserList = ({ users, onUserClick }) => (
         Inactive
       </FilterLink>
     </aside>
+    <Button primary style={{ float: 'right', marginBottom: '20px' }}>
+      <NavLink
+          style={{ color: '#FFF' }}
+          to="/users/new">
+        Account koppelen
+      </NavLink>
+    </Button>
     <table className="ui celled table">
       <thead>
         <tr>
