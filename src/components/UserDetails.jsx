@@ -6,16 +6,16 @@ class UserDetail extends React.Component {
   constructor(props) {
     super(props)
 
-    const user = props.user || {}
+    const account = props.account || {}
 
     // NB: Setting state of nested objects, i.e. `{ user: { name: '' } }`, is not supported
     this.state = {
-      active: String(user.active) || 'false',
-      emailAddress: user.emailAddress || '',
-      id: user.id >= 0 ? user.id : null,
-      medewerker: user.medewerker || false,
-      name: user.name || '',
-      speciaal_bevoegd: user.speciaal_bevoegd || false,
+      active: String(account.active) || 'false',
+      emailAddress: account.emailAddress || '',
+      id: account.id >= 0 ? account.id : null,
+      medewerker: account.medewerker || false,
+      name: account.name || '',
+      speciaal_bevoegd: account.speciaal_bevoegd || false,
     }
   }
 
@@ -96,7 +96,7 @@ class UserDetail extends React.Component {
 }
 
 UserDetail.propTypes = {
-  user: PropTypes.shape({
+  account: PropTypes.shape({
     id: PropTypes.number.isRequired,
     emailAddress: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired,

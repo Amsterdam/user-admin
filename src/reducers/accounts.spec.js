@@ -1,15 +1,15 @@
-import users from './users'
+import accounts from './accounts'
 
-describe('users reducer', () => {
+describe('accounts reducer', () => {
   it('should handle initial state', () => {
     expect(
-      users(undefined, {}).length
+      accounts(undefined, {}).length
     ).toBe(2)
   })
 
   it('should handle ADD_TODO', () => {
     expect(
-      users([], {
+      accounts([], {
         type: 'ADD_USER',
         emailAddress: 'john@doe.com',
         name: 'John Doe',
@@ -24,7 +24,7 @@ describe('users reducer', () => {
     ])
 
     expect(
-      users([
+      accounts([
         {
           emailAddress: 'john@doe.com',
           name: 'John Doe',

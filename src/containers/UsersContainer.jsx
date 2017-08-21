@@ -3,31 +3,30 @@ import { Route } from 'react-router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { addUser, updateUser } from '../actions/index'
-import { getActiveUsers, selectUser } from '../reducers/users'
+import { createAccount, updateAccount } from '../actions/account'
+import { getActiveAccounts, selectAccount } from '../reducers/accounts'
 import UserList from '../components/UserList'
 import UserDetails from '../components/UserDetails'
 
 const mapStateToProps = (state, ownProps) => ({
-  user: selectUser(state.users, Number(ownProps.match.params.id)),
-  users: getActiveUsers(state.users, state.visibilityFilter)
+  account: selectAccount(state.accounts, Number(ownProps.match.params.id)),
+  accounts: getActiveAccounts(state.accounts, state.visibilityFilter)
 })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  onCreate: addUser,
-  onUpdate: updateUser,
+  onCreate: createAccount,
+  onUpdate: updateAccount,
 }, dispatch)
 
 const UsersContainer = (props) => (
   <section>
     <Route exact path="/users" render={() => (
-      <UserList users={props.users} />
+      <UserList accounts={props.accounts} />
     )} />
     <Route exact path="/users/:id(\d+)" render={() => (
       <UserDetails
-          onLeave={props.onLeave}
           onUpdate={props.onUpdate}
-          user={props.user}
+          account={props.account}
       />
     )} onLeave={props.onLeave} />
     <Route exact path="/users/new" render={() => (

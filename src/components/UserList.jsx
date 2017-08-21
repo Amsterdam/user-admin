@@ -5,7 +5,7 @@ import { Button } from 'semantic-ui-react'
 
 import FilterLink from '../containers/FilterLink'
 
-const UserList = ({ users, onUserClick }) => (
+const UserList = ({ accounts }) => (
   <section>
     <aside style={{ float: 'left' }}>
       Show:
@@ -39,31 +39,31 @@ const UserList = ({ users, onUserClick }) => (
         </tr>
       </thead>
       <tbody>
-        {users.map(user => (
-          <tr key={user.id}>
+        {accounts.map(account => (
+          <tr key={account.id}>
             <td>
               <NavLink
-                  to={`/users/${user.id}`}
+                  to={`/users/${account.id}`}
                   style={{ display: 'block' }}
               >
-                {user.name}
+                {account.name}
               </NavLink>
             </td>
             <td>
               <NavLink
-                  to={`/users/${user.id}`}
+                  to={`/users/${account.id}`}
                   style={{ display: 'block' }}
               >
-                {user.emailAddress}
+                {account.emailAddress}
               </NavLink>
             </td>
             <td>Geen</td>
             <td>
               <NavLink
-                  to={`/users/${user.id}`}
+                  to={`/users/${account.id}`}
                   style={{ display: 'block' }}
               >
-                {user.active ? 'Actief' : 'Inactief'}
+                {account.active ? 'Actief' : 'Inactief'}
               </NavLink>
             </td>
           </tr>
@@ -74,12 +74,11 @@ const UserList = ({ users, onUserClick }) => (
 )
 
 UserList.propTypes = {
-  users: PropTypes.arrayOf(PropTypes.shape({
+  accounts: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
     emailAddress: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired
-  }).isRequired).isRequired,
-  onUserClick: PropTypes.func
+  }).isRequired).isRequired
 }
 
 export default UserList
