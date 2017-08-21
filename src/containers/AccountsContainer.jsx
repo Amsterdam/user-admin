@@ -21,12 +21,6 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 
 const AccountsContainer = (props) => (
   <section>
-    <Route exact path="/" render={() => (
-      <AccountList
-          accounts={props.accounts}
-          onRemove={props.onRemove}
-      />
-    )} />
     <Route exact path="/users" render={() => (
       <AccountList
           accounts={props.accounts}

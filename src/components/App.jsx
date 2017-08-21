@@ -1,5 +1,5 @@
 import React from 'react'
-import { Route } from 'react-router'
+import { Route, Redirect } from 'react-router'
 import { Container } from 'semantic-ui-react'
 
 import Header from '../components/Header'
@@ -9,7 +9,9 @@ const App = () => (
   <div>
     <Header />
     <Container style={{ marginTop: '7em' }}>
-      <Route exact path="/" component={AccountsContainer} />
+      <Route exact path="/">
+        <Redirect to="/users"/>
+      </Route>
       <Route exact path="/users/:id?" component={AccountsContainer} />
     </Container>
   </div>

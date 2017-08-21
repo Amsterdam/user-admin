@@ -4,15 +4,17 @@
       "active": "true",
       "emailAddress": "employee@amsterdam.nl",
       "id": 1,
-      "medewerker": false,
+      "medewerker": true,
       "name": "Employee",
       "speciaal_bevoegd": false
     },
     {
-      "id": 2,
+      "active": "true",
       "emailAddress": "employee_plus@amsterdam.nl",
+      "id": 2,
+      "medewerker": true,
       "name": "Employee Plus",
-      "active": false
+      "speciaal_bevoegd": true
     }
   ]
 }

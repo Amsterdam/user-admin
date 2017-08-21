@@ -113,6 +113,7 @@ export const removeAccount = (account) => {
       })
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
+        // TODO: Use a more consistent approach compared to other actions
         dispatch(fetchAccounts())
       })
       .catch(error => {
