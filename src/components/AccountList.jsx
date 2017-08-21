@@ -5,7 +5,7 @@ import { Button } from 'semantic-ui-react'
 
 import FilterLink from '../containers/FilterLink'
 
-const UserList = ({ accounts }) => (
+const AccountList = ({ accounts, onRemove }) => (
   <section>
     <aside style={{ float: 'left' }}>
       Show:
@@ -36,6 +36,7 @@ const UserList = ({ accounts }) => (
           <th>E-mailadres</th>
           <th>Rollen</th>
           <th>Actief</th>
+          <th />
         </tr>
       </thead>
       <tbody>
@@ -66,6 +67,13 @@ const UserList = ({ accounts }) => (
                 {account.active ? 'Actief' : 'Inactief'}
               </NavLink>
             </td>
+            <td>
+              <Button
+                  compact
+                  onClick={() => onRemove(account)}>
+                Verwijderen
+              </Button>
+            </td>
           </tr>
         ))}
       </tbody>
@@ -73,12 +81,13 @@ const UserList = ({ accounts }) => (
   </section>
 )
 
-UserList.propTypes = {
+AccountList.propTypes = {
   accounts: PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
     emailAddress: PropTypes.string.isRequired,
     name: PropTypes.string.isRequired
-  }).isRequired).isRequired
+  }).isRequired).isRequired,
+  onRemove: PropTypes.func,
 }
 
-export default UserList
+export default AccountList

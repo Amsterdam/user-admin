@@ -1,6 +1,7 @@
 import {
   CREATE_ACCOUNT_SUCCESS,
   FETCH_ACCOUNTS_SUCCESS,
+  REMOVE_ACCOUNT_SUCCESS,
   UPDATE_ACCOUNT_SUCCESS
 } from '../actions/account';
 
@@ -15,6 +16,8 @@ export default function(state = initialState, action) {
       ]
     case FETCH_ACCOUNTS_SUCCESS:
       return action.accounts
+    case REMOVE_ACCOUNT_SUCCESS:
+      return state.filter(account => account.id !== action.account.id)
     case UPDATE_ACCOUNT_SUCCESS:
       return state.map(account => account.id === action.account.id ? action.account : account)
     default:

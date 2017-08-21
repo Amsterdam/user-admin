@@ -3,10 +3,10 @@ import { Route } from 'react-router'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
-import { createAccount, updateAccount } from '../actions/account'
+import { createAccount, removeAccount, updateAccount } from '../actions/account'
 import { getActiveAccounts, selectAccount } from '../reducers/accounts'
-import UserList from '../components/UserList'
-import UserDetails from '../components/UserDetails'
+import AccountList from '../components/AccountList'
+import AccountDetail from '../components/AccountDetail'
 
 const mapStateToProps = (state, ownProps) => ({
   account: selectAccount(state.accounts, Number(ownProps.match.params.id)),
@@ -15,22 +15,32 @@ const mapStateToProps = (state, ownProps) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   onCreate: createAccount,
+  onRemove: removeAccount,
   onUpdate: updateAccount,
 }, dispatch)
 
-const UsersContainer = (props) => (
+const AccountsContainer = (props) => (
   <section>
+    <Route exact path="/" render={() => (
+      <AccountList
+          accounts={props.accounts}
+          onRemove={props.onRemove}
+      />
+    )} />
     <Route exact path="/users" render={() => (
-      <UserList accounts={props.accounts} />
+      <AccountList
+          accounts={props.accounts}
+          onRemove={props.onRemove}
+      />
     )} />
     <Route exact path="/users/:id(\d+)" render={() => (
-      <UserDetails
-          onUpdate={props.onUpdate}
+      <AccountDetail
           account={props.account}
+          onUpdate={props.onUpdate}
       />
     )} onLeave={props.onLeave} />
     <Route exact path="/users/new" render={() => (
-      <UserDetails
+      <AccountDetail
           onCreate={props.onCreate}
       />
     )} />
@@ -40,4 +50,4 @@ const UsersContainer = (props) => (
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(UsersContainer)
+)(AccountsContainer)

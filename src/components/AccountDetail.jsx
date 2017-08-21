@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Form } from 'semantic-ui-react'
 
-class UserDetail extends React.Component {
+class AccountDetail extends React.Component {
   constructor(props) {
     super(props)
 
@@ -95,7 +95,7 @@ class UserDetail extends React.Component {
   }
 }
 
-UserDetail.propTypes = {
+AccountDetail.propTypes = {
   account: PropTypes.shape({
     id: PropTypes.number.isRequired,
     emailAddress: PropTypes.string.isRequired,
@@ -111,4 +111,4 @@ UserDetail.propTypes = {
   onUpdate: PropTypes.func
 }
 
-export default UserDetail
+export default AccountDetail

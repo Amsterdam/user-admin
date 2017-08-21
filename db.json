@@ -1,32 +1,18 @@
 {
   "accounts": [
     {
-      "id": 0,
+      "active": "true",
       "emailAddress": "employee@amsterdam.nl",
+      "id": 1,
+      "medewerker": false,
       "name": "Employee",
-      "active": true
+      "speciaal_bevoegd": false
     },
     {
-      "id": 1,
+      "id": 2,
       "emailAddress": "employee_plus@amsterdam.nl",
       "name": "Employee Plus",
       "active": false
-    },
-    {
-      "active": "true",
-      "emailAddress": "r.habermehl@amsterdam.nl",
-      "id": 2,
-      "medewerker": false,
-      "name": "Robbin Habermehl",
-      "speciaal_bevoegd": true
-    },
-    {
-      "active": "false",
-      "emailAddress": "Doei",
-      "id": 3,
-      "medewerker": true,
-      "name": "Hoi",
-      "speciaal_bevoegd": false
     }
   ]
 }
