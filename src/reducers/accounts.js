@@ -31,9 +31,9 @@ export function getActiveAccounts(accounts, filter) {
     case 'SHOW_ALL':
       return accounts;
     case 'SHOW_ACTIVE':
-      return accounts.filter(account => account.active);
+      return accounts.filter(account => account.active === 'true');
     case 'SHOW_INACTIVE':
-      return accounts.filter(account => !account.active);
+      return accounts.filter(account => account.active === 'false');
     default:
       throw new Error(`Unknown filter: ${filter}`);
   }
