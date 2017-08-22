@@ -1,9 +1,9 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom'
-import { Container, Menu } from 'semantic-ui-react'
+import React from 'react';
+import { NavLink } from 'react-router-dom';
+import { Container, Menu } from 'semantic-ui-react';
 
 const Header = () => (
-  <Menu fixed='top' inverted>
+  <Menu fixed="top" inverted>
     <Container>
       <Menu.Item header>
         <NavLink to="/users">
@@ -17,6 +17,6 @@ const Header = () => (
       </Menu.Item>
     </Container>
   </Menu>
-)
+);
 
-export default Header
+export default Header;

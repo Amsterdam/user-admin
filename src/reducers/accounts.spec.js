@@ -1,11 +1,11 @@
-import accounts from './accounts'
+import accounts from './accounts';
 
 describe('accounts reducer', () => {
   it('should handle initial state', () => {
     expect(
       accounts(undefined, {}).length
-    ).toBe(2)
-  })
+    ).toBe(2);
+  });
 
   it('should handle ADD_TODO', () => {
     expect(
@@ -21,7 +21,7 @@ describe('accounts reducer', () => {
         name: 'John Doe',
         id: 0
       }
-    ])
+    ]);
 
     expect(
       accounts([
@@ -48,6 +48,6 @@ describe('accounts reducer', () => {
         name: 'Jane Doe',
         id: 1
       }
-    ])
-  })
-})
+    ]);
+  });
+});

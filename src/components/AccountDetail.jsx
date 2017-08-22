@@ -1,12 +1,12 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Form } from 'semantic-ui-react'
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Form } from 'semantic-ui-react';
 
 class AccountDetail extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
-    const account = props.account || {}
+    const account = props.account || {};
 
     // NB: Setting state of nested objects, i.e. `{ user: { name: '' } }`, is not supported
     this.state = {
@@ -15,26 +15,29 @@ class AccountDetail extends React.Component {
       id: account.id >= 0 ? account.id : null,
       medewerker: account.medewerker || false,
       name: account.name || '',
-      speciaal_bevoegd: account.speciaal_bevoegd || false,
-    }
+      speciaal_bevoegd: account.speciaal_bevoegd || false
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange = (event, result) => {
+  handleChange(event, result) {
     this.setState({
       // NB: `result.*` is Semantic UI's approach for cross-browser support
       [result.name]: result.value || result.checked
-    })
+    });
   }
 
-  handleSubmit = (event) => {
-    event.preventDefault()
+  handleSubmit(event) {
+    event.preventDefault();
 
     if (this.props.onCreate) {
-      this.props.onCreate(this.state)
+      this.props.onCreate(this.state);
     }
 
     if (this.props.onUpdate) {
-      this.props.onUpdate(this.state)
+      this.props.onUpdate(this.state);
     }
   }
 
@@ -43,72 +46,78 @@ class AccountDetail extends React.Component {
       <Form onSubmit={this.handleSubmit}>
         <Form.Group widths="equal">
           <Form.Input
-              label="Naam"
-              name="name"
-              onChange={this.handleChange}
-              placeholder="Naam"
-              value={this.state.name}
+            label="Naam"
+            name="name"
+            onChange={this.handleChange}
+            placeholder="Naam"
+            value={this.state.name}
           />
           <Form.Input
-              label="E-mailadres"
-              name="emailAddress"
-              onChange={this.handleChange}
-              placeholder="E-mailadres"
-              value={this.state.emailAddress}
+            label="E-mailadres"
+            name="emailAddress"
+            onChange={this.handleChange}
+            placeholder="E-mailadres"
+            value={this.state.emailAddress}
           />
         </Form.Group>
         <Form.Group inline>
-          <label>Rollen</label>
+          <label htmlFor="speciaal_bevoegd">Rollen</label>
           <Form.Checkbox
-              checked={this.state.speciaal_bevoegd}
-              label="Speciaal bevoegd"
-              name="speciaal_bevoegd"
-              onChange={this.handleChange}
+            checked={this.state.speciaal_bevoegd}
+            label="Speciaal bevoegd"
+            name="speciaal_bevoegd"
+            onChange={this.handleChange}
           />
           <Form.Checkbox
-              checked={this.state.medewerker}
-              label="Medewerker"
-              name="medewerker"
-              onChange={this.handleChange}
+            checked={this.state.medewerker}
+            label="Medewerker"
+            name="medewerker"
+            onChange={this.handleChange}
           />
         </Form.Group>
         <Form.Group inline>
-          <label>Status</label>
+          <label htmlFor="active">Status</label>
           <Form.Radio
-              checked={this.state.active === 'true'}
-              label="Actief"
-              name="active"
-              onChange={this.handleChange}
-              value="true"
+            checked={this.state.active === 'true'}
+            label="Actief"
+            name="active"
+            onChange={this.handleChange}
+            value="true"
           />
           <Form.Radio
-              checked={this.state.active === 'false'}
-              label="Inactief"
-              name="active"
-              onChange={this.handleChange}
-              value="false"
+            checked={this.state.active === 'false'}
+            label="Inactief"
+            name="active"
+            onChange={this.handleChange}
+            value="false"
           />
         </Form.Group>
         <Form.Button>Opslaan</Form.Button>
       </Form>
-    )
+    );
   }
 }
 
+AccountDetail.defaultProps = {
+  account: {},
+  onCreate: null,
+  onUpdate: null
+};
+
 AccountDetail.propTypes = {
   account: PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    emailAddress: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired,
+    id: PropTypes.number,
+    emailAddress: PropTypes.string,
+    name: PropTypes.string,
     speciaal_bevoegd: PropTypes.bool,
     medewerker: PropTypes.bool,
     active: PropTypes.oneOfType([
       PropTypes.bool,
       PropTypes.string
-    ]).isRequired
+    ])
   }),
   onCreate: PropTypes.func,
   onUpdate: PropTypes.func
-}
+};
 
-export default AccountDetail
+export default AccountDetail;
