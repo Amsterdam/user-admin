@@ -10,7 +10,7 @@ class AccountDetail extends React.Component {
 
     // NB: Setting state of nested objects, i.e. `{ user: { name: '' } }`, is not supported
     this.state = {
-      active: String(account.active) || 'false',
+      active: account.active ? String(account.active) : 'false',
       emailAddress: account.emailAddress || '',
       id: account.id >= 0 ? account.id : null,
       medewerker: account.medewerker || false,

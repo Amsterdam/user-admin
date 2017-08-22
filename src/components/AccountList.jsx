@@ -69,7 +69,7 @@ const AccountList = ({ accounts, onRemove }) => (
                 to={`/users/${account.id}`}
                 style={{ display: 'block' }}
               >
-                {account.active ? 'Actief' : 'Inactief'}
+                {account.active === 'true' ? 'Actief' : 'Inactief'}
               </NavLink>
             </td>
             <td>
