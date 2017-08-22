@@ -9,9 +9,13 @@ const App = () => (
   <div>
     <Header />
     <Container style={{ marginTop: '7em' }}>
-      <Route exact path="/">
-        <Redirect to="/users" />
-      </Route>
+      <Route
+        exact
+        path="/"
+        render={() => (
+          <Redirect to="/users" />
+        )}
+      />
       <Route exact path="/users/:id?" component={AccountsContainer} />
     </Container>
   </div>
