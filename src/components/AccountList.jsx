@@ -3,26 +3,9 @@ import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 
-import FilterLink from '../containers/FilterLink';
-
 const AccountList = ({ accounts, onRemove }) => (
   <section>
-    <aside style={{ float: 'left' }}>
-      Show:
-      {' '}
-      <FilterLink filter="SHOW_ALL">
-        All
-      </FilterLink>
-      {', '}
-      <FilterLink filter="SHOW_ACTIVE">
-        Active
-      </FilterLink>
-      {', '}
-      <FilterLink filter="SHOW_INACTIVE">
-        Inactive
-      </FilterLink>
-    </aside>
-    <Button primary style={{ float: 'right', marginBottom: '20px' }}>
+    <Button primary style={{ marginBottom: '20px' }}>
       <NavLink
         style={{ color: '#FFF' }}
         to="/accounts/new"
@@ -33,7 +16,6 @@ const AccountList = ({ accounts, onRemove }) => (
     <table className="ui celled table">
       <thead>
         <tr>
-          <th>Naam</th>
           <th>E-mailadres</th>
           <th>Rollen</th>
           <th />
@@ -42,14 +24,6 @@ const AccountList = ({ accounts, onRemove }) => (
       <tbody>
         {accounts.map(account => (
           <tr key={account.emailAddress}>
-            <td>
-              <NavLink
-                to={`/accounts/${account.emailAddress}`}
-                style={{ display: 'block' }}
-              >
-                {account.name}
-              </NavLink>
-            </td>
             <td>
               <NavLink
                 to={`/accounts/${account.emailAddress}`}

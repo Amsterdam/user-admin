@@ -73,13 +73,6 @@ class AccountDetail extends React.Component {
       <Form onSubmit={this.handleSubmit}>
         <Form.Group widths="equal">
           <Form.Input
-            label="Naam"
-            name="name"
-            onChange={this.handleChange}
-            placeholder="Naam"
-            value={this.state.name}
-          />
-          <Form.Input
             label="E-mailadres"
             name="emailAddress"
             onChange={this.handleChange}
