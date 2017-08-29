@@ -10,6 +10,7 @@ import thunk from 'redux-thunk';
 import reducers from './reducers';
 import App from './components/App';
 import { fetchAccounts } from './actions/account';
+import { fetchRoles } from './actions/roles';
 
 const history = createHistory();
 const router = routerMiddleware(history);
@@ -25,6 +26,7 @@ const store = createStore(
 );
 
 store.dispatch(fetchAccounts());
+store.dispatch(fetchRoles());
 
 render(
   <Provider store={store}>

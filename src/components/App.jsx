@@ -13,10 +13,10 @@ const App = () => (
         exact
         path="/"
         render={() => (
-          <Redirect to="/users" />
+          <Redirect to="/accounts" />
         )}
       />
-      <Route exact path="/users/:id?" component={AccountsContainer} />
+      <Route exact path="/accounts/:id?" component={AccountsContainer} />
     </Container>
   </div>
 );

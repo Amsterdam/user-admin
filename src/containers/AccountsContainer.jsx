@@ -10,8 +10,9 @@ import AccountList from '../components/AccountList';
 import AccountDetail from '../components/AccountDetail';
 
 const mapStateToProps = (state, ownProps) => ({
-  account: selectAccount(state.accounts, Number(ownProps.match.params.id)),
-  accounts: getActiveAccounts(state.accounts, state.visibilityFilter)
+  account: selectAccount(state.accounts, ownProps.match.params.id),
+  accounts: getActiveAccounts(state.accounts, state.visibilityFilter),
+  roles: state.roles
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({
@@ -24,7 +25,7 @@ const AccountsContainer = props => (
   <section>
     <Route
       exact
-      path="/users"
+      path="/accounts"
       render={() => (
         <AccountList
           accounts={props.accounts}
@@ -34,20 +35,22 @@ const AccountsContainer = props => (
     />
     <Route
       exact
-      path="/users/:id(\d+)"
+      path="/accounts/:id(\S+@\S+)"
       render={() => (
         <AccountDetail
           account={props.account}
           onUpdate={props.onUpdate}
+          roles={props.roles}
         />
       )}
     />
     <Route
       exact
-      path="/users/new"
+      path="/accounts/new"
       render={() => (
         <AccountDetail
           onCreate={props.onCreate}
+          roles={props.roles}
         />
       )}
     />
@@ -56,7 +59,8 @@ const AccountsContainer = props => (
 
 AccountsContainer.defaultProps = {
   account: {},
-  accounts: []
+  accounts: [],
+  roles: []
 };
 
 AccountsContainer.propTypes = {
@@ -64,7 +68,8 @@ AccountsContainer.propTypes = {
   accounts: PropTypes.arrayOf(PropTypes.object),
   onCreate: PropTypes.func.isRequired,
   onRemove: PropTypes.func.isRequired,
-  onUpdate: PropTypes.func.isRequired
+  onUpdate: PropTypes.func.isRequired,
+  roles: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default connect(

@@ -1,25 +1,44 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from 'semantic-ui-react';
+import { Form, Header } from 'semantic-ui-react';
 
 class AccountDetail extends React.Component {
   constructor(props) {
     super(props);
 
-    const account = props.account || {};
-
-    // NB: Setting state of nested objects, i.e. `{ user: { name: '' } }`, is not supported
+    // NB: Setting state of nested objects, i.e. `{ account: { name: '' } }`, is not supported
     this.state = {
-      active: account.active ? String(account.active) : 'false',
-      emailAddress: account.emailAddress || '',
-      id: account.id >= 0 ? account.id : null,
-      medewerker: account.medewerker || false,
-      name: account.name || '',
-      speciaal_bevoegd: account.speciaal_bevoegd || false
+      emailAddress: props.account.emailAddress || '',
+      name: props.account.name || '',
+      // NB: Set all roles directly on the state
+      ...(props.account.roles || [])
+        .map(role => role.title)
+        .reduce((prev, curr) => ({
+          ...prev,
+          [curr]: true
+        }), {})
     };
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (!Object.keys(nextProps.account).length) {
+      return;
+    }
+
+    this.setState({
+      emailAddress: nextProps.account.emailAddress,
+      name: nextProps.account.name,
+      // NB: Set all roles directly on the state
+      ...(nextProps.account.roles || [])
+        .map(role => role.title)
+        .reduce((prev, curr) => ({
+          ...prev,
+          [curr]: true
+        }), {})
+    });
   }
 
   handleChange(event, result) {
@@ -32,26 +51,28 @@ class AccountDetail extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
 
+    const account = {
+      emailAddress: this.state.emailAddress,
+      name: this.state.name,
+      // NB: Reverse mapping of roles directly to the state
+      roles: this.props.roles.reduce((prev, curr) => (this.state[curr.title] ?
+        prev.concat(curr) : prev), [])
+    };
+
     if (this.props.onCreate) {
-      this.props.onCreate(this.state);
+      this.props.onCreate(account);
     }
 
     if (this.props.onUpdate) {
-      this.props.onUpdate(this.state);
+      this.props.onUpdate(account);
     }
   }
 
   render() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Header as="h2">Koppeling wijzigen</Header>
         <Form.Group widths="equal">
-          <Form.Input
-            label="Naam"
-            name="name"
-            onChange={this.handleChange}
-            placeholder="Naam"
-            value={this.state.name}
-          />
           <Form.Input
             label="E-mailadres"
             name="emailAddress"
@@ -61,36 +82,16 @@ class AccountDetail extends React.Component {
           />
         </Form.Group>
         <Form.Group inline>
-          <label htmlFor="speciaal_bevoegd">Rollen</label>
-          <Form.Checkbox
-            checked={this.state.speciaal_bevoegd}
-            label="Speciaal bevoegd"
-            name="speciaal_bevoegd"
-            onChange={this.handleChange}
-          />
-          <Form.Checkbox
-            checked={this.state.medewerker}
-            label="Medewerker"
-            name="medewerker"
-            onChange={this.handleChange}
-          />
-        </Form.Group>
-        <Form.Group inline>
-          <label htmlFor="active">Status</label>
-          <Form.Radio
-            checked={this.state.active === 'true'}
-            label="Actief"
-            name="active"
-            onChange={this.handleChange}
-            value="true"
-          />
-          <Form.Radio
-            checked={this.state.active === 'false'}
-            label="Inactief"
-            name="active"
-            onChange={this.handleChange}
-            value="false"
-          />
+          <label htmlFor="employee_plus">Rollen</label>
+          {this.props.roles.map(role => (
+            <Form.Checkbox
+              checked={this.state[role.title]}
+              key={role.href}
+              label={role.title}
+              name={role.title}
+              onChange={this.handleChange}
+            />
+          ))}
         </Form.Group>
         <Form.Button>Opslaan</Form.Button>
       </Form>
@@ -100,24 +101,20 @@ class AccountDetail extends React.Component {
 
 AccountDetail.defaultProps = {
   account: {},
-  onCreate: null,
-  onUpdate: null
+  onCreate: () => {},
+  onUpdate: () => {},
+  roles: []
 };
 
 AccountDetail.propTypes = {
   account: PropTypes.shape({
-    id: PropTypes.number,
     emailAddress: PropTypes.string,
     name: PropTypes.string,
-    speciaal_bevoegd: PropTypes.bool,
-    medewerker: PropTypes.bool,
-    active: PropTypes.oneOfType([
-      PropTypes.bool,
-      PropTypes.string
-    ])
+    roles: PropTypes.array
   }),
   onCreate: PropTypes.func,
-  onUpdate: PropTypes.func
+  onUpdate: PropTypes.func,
+  roles: PropTypes.arrayOf(PropTypes.object)
 };
 
 export default AccountDetail;
