@@ -5,14 +5,15 @@ import { Button } from 'semantic-ui-react';
 
 const AccountList = ({ accounts, onRemove }) => (
   <section>
-    <Button primary style={{ marginBottom: '20px' }}>
+    {/* Use classes on a `<div>` instead of `<Button>` for Firefox support */}
+    <div className="ui primary button">
       <NavLink
         style={{ color: '#FFF' }}
         to="/accounts/new"
       >
         Account koppelen
       </NavLink>
-    </Button>
+    </div>
     <table className="ui celled table">
       <thead>
         <tr>
