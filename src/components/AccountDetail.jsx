@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Form } from 'semantic-ui-react';
+import { Form, Header } from 'semantic-ui-react';
 
 class AccountDetail extends React.Component {
   constructor(props) {
@@ -71,6 +71,7 @@ class AccountDetail extends React.Component {
   render() {
     return (
       <Form onSubmit={this.handleSubmit}>
+        <Header as="h2">Koppeling wijzigen</Header>
         <Form.Group widths="equal">
           <Form.Input
             label="E-mailadres"
