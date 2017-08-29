@@ -6,13 +6,13 @@ const Header = () => (
   <Menu fixed="top" inverted>
     <Container>
       <Menu.Item header>
-        <NavLink to="/users">
-          Gemeente Amsterdam IDP
+        <NavLink to="/accounts">
+          DataPunt ADW-beheer
         </NavLink>
       </Menu.Item>
       <Menu.Item>
-        <NavLink to="/users">
-          Gebruikers
+        <NavLink to="/accounts">
+          Koppelingen
         </NavLink>
       </Menu.Item>
     </Container>

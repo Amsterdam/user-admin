@@ -11,15 +11,16 @@ export default function (state = initialState, action) {
   switch (action.type) {
     case CREATE_ACCOUNT_SUCCESS:
       return [
-        ...state.filter(account => account.id !== action.account.id),
+        ...state.filter(account => account.emailAddress !== action.account.emailAddress),
         Object.assign({}, action.account)
       ];
     case FETCH_ACCOUNTS_SUCCESS:
-      return action.accounts;
+      return [...action.accounts];
     case REMOVE_ACCOUNT_SUCCESS:
-      return state.filter(account => account.id !== action.account.id);
+      return state.filter(account => account.id !== action.account.emailAddress);
     case UPDATE_ACCOUNT_SUCCESS:
-      return state.map(account => (account.id === action.account.id ? action.account : account));
+      return state.map(account => Object.assign({}, account,
+        (account.emailAddress === action.account.emailAddress ? action.account : account)));
     default:
       return state;
   }
@@ -40,5 +41,5 @@ export function getActiveAccounts(accounts, filter) {
 }
 
 export function selectAccount(accounts, accountId) {
-  return accounts.find(account => account.id === accountId);
+  return accounts.find(account => account.emailAddress === accountId);
 }

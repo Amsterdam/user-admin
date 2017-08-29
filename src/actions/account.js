@@ -5,7 +5,7 @@ export const FETCH_ACCOUNTS_SUCCESS = 'FETCH_ACCOUNTS_SUCCESS';
 export const REMOVE_ACCOUNT_SUCCESS = 'REMOVE_ACCOUNT_SUCCESS';
 export const UPDATE_ACCOUNT_SUCCESS = 'UPDATE_ACCOUNT_SUCCESS';
 
-const apiUrl = 'http://localhost:3001/accounts/';
+const apiUrl = 'https://acc.api.data.amsterdam.nl/authz_admin/accounts';
 
 export function createAccountSuccess(account) {
   return {
@@ -16,18 +16,24 @@ export function createAccountSuccess(account) {
 
 export function createAccount(account) {
   return (dispatch) => { // eslint-disable-line
-    return fetch(apiUrl, {
-      method: 'POST',
-      body: JSON.stringify(account),
+    return fetch(`${apiUrl}/${account.emailAddress}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        _links: {
+          role: account.roles
+        },
+        name: account.emailAddress,
+        title: account.name
+      }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/hal+json',
+        'If-None-Match': '*'
       }
     })
-      .then(response => response.json())
-      .then(account_ => dispatch(createAccountSuccess(account_)))
+      .then(() => dispatch(createAccountSuccess(account)))
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
-        dispatch(push('/users'));
+        dispatch(push('/accounts'));
       })
       .catch((error) => { throw error; });
   };
@@ -42,8 +48,14 @@ export function fetchAccountsSuccess(accounts) {
 
 export function fetchAccounts() {
   return (dispatch) => { // eslint-disable-line
-    return fetch(apiUrl)
+    return fetch(`${apiUrl}?embed=item`)
       .then(response => response.json())
+      .then(response => response._embedded.item)
+      .then(response => response.map(account => ({
+        emailAddress: account._links.self.name,
+        name: account._links.self.title,
+        roles: account._links.role
+      })))
       .then(accounts => dispatch(fetchAccountsSuccess(accounts)))
       .catch((error) => { throw error; });
   };
@@ -58,18 +70,24 @@ export function updateAccountSuccess(account) {
 
 export function updateAccount(account) {
   return (dispatch) => { // eslint-disable-line
-    return fetch(`${apiUrl}/${account.id}`, {
+    return fetch(`${apiUrl}/${account.emailAddress}`, {
       method: 'PUT',
-      body: JSON.stringify(account),
+      body: JSON.stringify({
+        _links: {
+          role: account.roles
+        },
+        name: account.emailAddress,
+        title: account.name
+      }),
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/hal+json',
+        'If-Match': '*'
       }
     })
-      .then(response => response.json())
-      .then(account_ => dispatch(updateAccountSuccess(account_)))
+      .then(() => dispatch(updateAccountSuccess(account)))
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
-        dispatch(push('/users'));
+        dispatch(push('/accounts'));
       })
       .catch((error) => { throw error; });
   };
@@ -84,15 +102,18 @@ export function removeAccountSuccess(account) {
 
 export function removeAccount(account) {
   return (dispatch) => { // eslint-disable-line
-    return fetch(`${apiUrl}/${account.id}`, {
-      method: 'DELETE'
+    return fetch(`${apiUrl}/${account.emailAddress}`, {
+      method: 'DELETE',
+      headers: {
+        'If-Match': '*'
+      }
     })
-      .then(response => response.json())
-      .then(account_ => dispatch(removeAccountSuccess(account_)))
+      .then(() => dispatch(removeAccountSuccess(account)))
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
         // TODO: Use a more consistent approach compared to other actions
         dispatch(fetchAccounts());
+        dispatch(push('/accounts'));
       })
       .catch((error) => { throw error; });
   };

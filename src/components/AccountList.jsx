@@ -25,7 +25,7 @@ const AccountList = ({ accounts, onRemove }) => (
     <Button primary style={{ float: 'right', marginBottom: '20px' }}>
       <NavLink
         style={{ color: '#FFF' }}
-        to="/users/new"
+        to="/accounts/new"
       >
         Account koppelen
       </NavLink>
@@ -36,16 +36,15 @@ const AccountList = ({ accounts, onRemove }) => (
           <th>Naam</th>
           <th>E-mailadres</th>
           <th>Rollen</th>
-          <th>Actief</th>
           <th />
         </tr>
       </thead>
       <tbody>
         {accounts.map(account => (
-          <tr key={account.id}>
+          <tr key={account.emailAddress}>
             <td>
               <NavLink
-                to={`/users/${account.id}`}
+                to={`/accounts/${account.emailAddress}`}
                 style={{ display: 'block' }}
               >
                 {account.name}
@@ -53,24 +52,14 @@ const AccountList = ({ accounts, onRemove }) => (
             </td>
             <td>
               <NavLink
-                to={`/users/${account.id}`}
+                to={`/accounts/${account.emailAddress}`}
                 style={{ display: 'block' }}
               >
                 {account.emailAddress}
               </NavLink>
             </td>
             <td>
-              {account.medewerker ? 'Medewerker' : ''}
-              {account.medewerker && account.speciaal_bevoegd ? ', ' : ''}
-              {account.speciaal_bevoegd ? 'Speciaal bevoegd' : ''}
-            </td>
-            <td>
-              <NavLink
-                to={`/users/${account.id}`}
-                style={{ display: 'block' }}
-              >
-                {account.active === 'true' ? 'Actief' : 'Inactief'}
-              </NavLink>
+              {account.roles.map(role => role.title).sort().join(', ')}
             </td>
             <td>
               <Button
@@ -88,15 +77,11 @@ const AccountList = ({ accounts, onRemove }) => (
 );
 
 AccountList.defaultProps = {
-  onRemove: null
+  onRemove: () => {}
 };
 
 AccountList.propTypes = {
-  accounts: PropTypes.arrayOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    emailAddress: PropTypes.string.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired).isRequired,
+  accounts: PropTypes.arrayOf(PropTypes.object).isRequired,
   onRemove: PropTypes.func
 };
 
