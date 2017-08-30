@@ -28,7 +28,7 @@ node {
             image.push()
         }
     }
-
+}
 
 String BRANCH = "${env.BRANCH_NAME}"
 
@@ -87,5 +87,4 @@ if (BRANCH == "master") {
             }
         }
     }
-  }
 }
