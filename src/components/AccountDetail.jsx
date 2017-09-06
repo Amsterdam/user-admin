@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { NavLink } from 'react-router-dom';
 import { Form, Header } from 'semantic-ui-react';
 
 class AccountDetail extends React.Component {
@@ -93,7 +94,18 @@ class AccountDetail extends React.Component {
             />
           ))}
         </Form.Group>
-        <Form.Button>Opslaan</Form.Button>
+        <Form.Group inline>
+          <Form.Button primary>Opslaan</Form.Button>
+          {/* Use classes on a `<div>` instead of `<Button>` for Firefox support */}
+          <div className="ui button">
+            <NavLink
+              style={{ color: '#FFF' }}
+              to="/accounts"
+            >
+              Annuleren
+            </NavLink>
+          </div>
+        </Form.Group>
       </Form>
     );
   }
