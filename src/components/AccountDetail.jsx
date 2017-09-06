@@ -75,6 +75,7 @@ class AccountDetail extends React.Component {
         <Header as="h2">Koppeling wijzigen</Header>
         <Form.Group widths="equal">
           <Form.Input
+            disabled={!!this.props.account.emailAddress}
             label="E-mailadres"
             name="emailAddress"
             onChange={this.handleChange}
