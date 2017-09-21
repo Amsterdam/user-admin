@@ -1,4 +1,6 @@
 import { push } from 'react-router-redux';
+import { getAuthHeaders } from '../services/auth/auth';
+import handleApiError from '../services/handle-api-error/handle-api-error';
 
 export const CREATE_ACCOUNT_SUCCESS = 'CREATE_ACCOUNT_SUCCESS';
 export const FETCH_ACCOUNTS_SUCCESS = 'FETCH_ACCOUNTS_SUCCESS';
@@ -26,6 +28,7 @@ export function createAccount(account) {
         title: account.name
       }),
       headers: {
+        ...getAuthHeaders(),
         'Content-Type': 'application/hal+json',
         'If-None-Match': '*'
       }
@@ -48,7 +51,8 @@ export function fetchAccountsSuccess(accounts) {
 
 export function fetchAccounts() {
   return (dispatch) => { // eslint-disable-line
-    return fetch(`${apiUrl}?embed=item`)
+    return fetch(`${apiUrl}?embed=item`, { headers: getAuthHeaders() })
+      .then(handleApiError)
       .then(response => response.json())
       .then(response => response._embedded.item)
       .then(response => response.map(account => ({
@@ -80,6 +84,7 @@ export function updateAccount(account) {
         title: account.name
       }),
       headers: {
+        ...getAuthHeaders(),
         'Content-Type': 'application/hal+json',
         'If-Match': '*'
       }
@@ -105,6 +110,7 @@ export function removeAccount(account) {
     return fetch(`${apiUrl}/${account.emailAddress}`, {
       method: 'DELETE',
       headers: {
+        ...getAuthHeaders(),
         'If-Match': '*'
       }
     })
