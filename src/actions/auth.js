@@ -1,7 +1,6 @@
 import auth from '../services/auth/auth';
 
 export const SET_ACCESS_TOKEN = 'SET_ACCESS_TOKEN';
-export const HANDLE_AUTH_CALLBACK_SUCCESS = 'HANDLE_AUTH_CALLBACK_SUCCESS';
 
 export function setAccessToken(accessToken) {
   return {
@@ -10,14 +9,8 @@ export function setAccessToken(accessToken) {
   };
 }
 
-export function handleAuthCallbackSuccess() {
-  return {
-    type: HANDLE_AUTH_CALLBACK_SUCCESS
-  };
-}
-
-export function handleAuthCallback() {
+export function initAuth(history) {
   return (dispatch) => { // eslint-disable-line
-    dispatch(setAccessToken(auth()));
+    dispatch(setAccessToken(auth(history)));
   };
 }

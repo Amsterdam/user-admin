@@ -9,7 +9,7 @@ import thunk from 'redux-thunk';
 
 import reducers from './reducers';
 import App from './components/App';
-import { handleAuthCallback } from './actions/auth';
+import { initAuth } from './actions/auth';
 import { fetchAccounts } from './actions/account';
 import { fetchRoles } from './actions/roles';
 
@@ -26,9 +26,9 @@ const store = createStore(
   )
 );
 
-store.dispatch(handleAuthCallback());
-store.dispatch(fetchAccounts());
-store.dispatch(fetchRoles());
+store.dispatch(initAuth(history));
+store.dispatch(fetchAccounts(history));
+store.dispatch(fetchRoles(history));
 
 render(
   <Provider store={store}>

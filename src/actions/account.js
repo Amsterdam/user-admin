@@ -49,10 +49,10 @@ export function fetchAccountsSuccess(accounts) {
   };
 }
 
-export function fetchAccounts() {
+export function fetchAccounts(history) {
   return (dispatch) => { // eslint-disable-line
     return fetch(`${apiUrl}?embed=item`, { headers: getAuthHeaders() })
-      .then(handleApiError)
+      .then(handleApiError(history))
       .then(response => response.json())
       .then(response => response._embedded.item)
       .then(response => response.map(account => ({

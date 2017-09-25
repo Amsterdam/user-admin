@@ -30,9 +30,9 @@ const AUTH_PATH = `oauth2/authorize?idp_id=datapunt&response_type=token&client_i
 
 // The keys of values we need to store in the session storage
 //
-// Query string of the state at the moment we redirect to the OAuth2
-// authorization service, and need to get back to afterwards
-const CALLBACK_PARAMS = 'callbackParams';
+// JSON encoded `history.location` object at the moment we redirect to the
+// OAuth2 authorization service, and need to get back to afterwards
+const CALLBACK_LOCATION = 'callbackLocation';
 // The OAuth2 state(token) (OAuth terminology, has nothing to do with
 // our app state), which is a random string
 const STATE_TOKEN = 'stateToken';
@@ -40,32 +40,30 @@ const STATE_TOKEN = 'stateToken';
 // containing user scopes and name
 const ACCESS_TOKEN = 'accessToken';
 
+let history; // Browser history object
 let initialized = false;
+let logingIn = false;
 
 /**
- * Removes parameters from the URL, as set by an error callback from
- * the OAuth2 authorization service, to clean up the URL.
- */
-function removeErrorParamsFromPath() {
-  location.search = '';
-}
-
-function removeStateToken() {
-  sessionStorage.removeItem(STATE_TOKEN);
-}
-
-/**
- * Restores saved search parameters from the session storage (by
- * `savePath`) to the URL.
+ * Restores saved location from the session storage.
  *
- * @param {string} path The path as saved in the session storage.
+ * Removes the saved location from the session storage.
+ *
+ * @throws When the session storage contains location data but could not be
+ * parsed as JSON.
  */
-function restorePath(path) {
-  sessionStorage.removeItem(CALLBACK_PARAMS);
-
-  // location.replace(); // overwrite the existing location (prevent back button to re-login)
-  location.hash = ''; // remove the parameters from the authorization service
-  location.pathname = path;
+function restorePath() {
+  try {
+    const callback = sessionStorage.getItem(CALLBACK_LOCATION);
+    if (callback) {
+      const location = JSON.parse(callback);
+      history.replace(location); // Restore path from session
+    }
+  } catch (error) {
+    throw new Error(`Saved callback location could not be parsed to JSON. ${error}`);
+  } finally {
+    sessionStorage.removeItem(CALLBACK_LOCATION);
+  }
 }
 
 /**
@@ -76,9 +74,11 @@ function restorePath(path) {
  * service.
  */
 function handleError(code, description) {
-  removeStateToken(); // Remove state token from session
-  restorePath(sessionStorage.getItem(CALLBACK_PARAMS)); // Restore path from session
-  removeErrorParamsFromPath();
+  sessionStorage.removeItem(STATE_TOKEN);
+  restorePath();
+  // Remove parameters from the URL, as set by the error callback from the
+  // OAuth2 authorization service, to clean up the URL.
+  // location.search = '';
   throw new Error('Authorization service responded with error ' +
       `${code} [${description}] (${ERROR_MESSAGES[code]})`);
 }
@@ -88,16 +88,18 @@ function handleError(code, description) {
  * authorization service.
  */
 function catchError() {
-  const params = queryStringParser(location.search);
+  const params = queryStringParser(history.location.search);
   if (params && params.error) {
     handleError(params.error, params.error_description);
   }
 }
 
 /**
- * Restores the access token from session storage when available.
+ * Returns the access token from session storage when available.
+ *
+ * @returns {string} The access token.
  */
-function restoreAccessToken() {
+function getAccessToken() {
   return sessionStorage.getItem(ACCESS_TOKEN);
 }
 
@@ -105,6 +107,12 @@ function restoreAccessToken() {
  * Redirects to the OAuth2 authorization service.
  */
 function login() {
+  // Make sure we start the login process only once
+  if (logingIn) {
+    return;
+  }
+
+  logingIn = true;
   // Get the URI the OAuth2 authorization service needs to use as
   // callback
   const callback = `${location.protocol}//${location.host}/`;
@@ -115,8 +123,8 @@ function login() {
     throw new Error('crypto library is not available on the current browser');
   }
 
-  // Save current path in session
-  sessionStorage.setItem(CALLBACK_PARAMS, location.pathname);
+  // Save current location in session
+  sessionStorage.setItem(CALLBACK_LOCATION, JSON.stringify(history.location));
   // Save the state token in session
   sessionStorage.setItem(STATE_TOKEN, stateToken);
 
@@ -161,14 +169,13 @@ function isCallback(params) {
 
 /**
  * Finishes the callback from the OAuth2 authorization service.
+ *
+ * @param {string} token The access token.
  */
 function useAccessToken(token) {
   sessionStorage.setItem(ACCESS_TOKEN, token);
   sessionStorage.removeItem(STATE_TOKEN);
-  const pathParams = sessionStorage.getItem(CALLBACK_PARAMS);
-  if (pathParams) {
-    restorePath(pathParams); // Restore path from session
-  }
+  restorePath(); // Restore path from session
 }
 
 /**
@@ -178,7 +185,7 @@ function useAccessToken(token) {
  * @returns boolean True when this is a callback, otherwise false.
  */
 function handleCallback() {
-  const params = queryStringParser(location.hash);
+  const params = queryStringParser(history.location.hash);
   if (isCallback(params)) {
     useAccessToken(params.access_token);
     return true;
@@ -186,16 +193,33 @@ function handleCallback() {
   return false;
 }
 
-export default function () {
+/**
+ * Initializes the auth service when needed. Catches any callback params and
+ * errors from the OAuth2 authorization service when available.
+ *
+ * Retrieves the access token and returns it. When not available it initiates
+ * the login process which will redirect the user to the OAuth2 authorization
+ * service.
+ *
+ * @returns {string} The access token when available;
+ */
+export default function (hist) {
+  history = hist;
   if (!initialized) {
     initialized = true;
     catchError(); // Catch any error from the OAuth2 authorization service
     handleCallback(); // Handle a callback from the OAuth2 authorization service
   }
-  return restoreAccessToken() || // Restore access token from session storage
+  return getAccessToken() || // Restore access token from session storage
     login(); // Initiate login process when there is no access token
 }
 
+/**
+ * Creates an instance of the native JS `Headers` class containing the
+ * authorization headers needed for an API call.
+ *
+ * @returns {Object<string, string>} The headers needed for an API call.
+ */
 export function getAuthHeaders() {
-  return new Headers({ Authorization: `Bearer ${restoreAccessToken()}` });
+  return new Headers({ Authorization: `Bearer ${getAccessToken()}` });
 }
