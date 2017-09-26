@@ -30,9 +30,9 @@ const AUTH_PATH = `oauth2/authorize?idp_id=datapunt&response_type=token&client_i
 
 // The keys of values we need to store in the session storage
 //
-// JSON encoded `history.location` object at the moment we redirect to the
+// `location.pathname` string at the moment we redirect to the
 // OAuth2 authorization service, and need to get back to afterwards
-const CALLBACK_LOCATION = 'callbackLocation';
+const RETURN_PATH = 'returnPath';
 // The OAuth2 state(token) (OAuth terminology, has nothing to do with
 // our app state), which is a random string
 const STATE_TOKEN = 'stateToken';
@@ -40,31 +40,8 @@ const STATE_TOKEN = 'stateToken';
 // containing user scopes and name
 const ACCESS_TOKEN = 'accessToken';
 
-let history; // Browser history object
 let initialized = false;
-let logingIn = false;
-
-/**
- * Restores saved location from the session storage.
- *
- * Removes the saved location from the session storage.
- *
- * @throws When the session storage contains location data but could not be
- * parsed as JSON.
- */
-function restorePath() {
-  try {
-    const callback = sessionStorage.getItem(CALLBACK_LOCATION);
-    if (callback) {
-      const location = JSON.parse(callback);
-      history.replace(location); // Restore path from session
-    }
-  } catch (error) {
-    throw new Error(`Saved callback location could not be parsed to JSON. ${error}`);
-  } finally {
-    sessionStorage.removeItem(CALLBACK_LOCATION);
-  }
-}
+let returnPath;
 
 /**
  * Finishes an error from the OAuth2 authorization service.
@@ -75,7 +52,6 @@ function restorePath() {
  */
 function handleError(code, description) {
   sessionStorage.removeItem(STATE_TOKEN);
-  restorePath();
   // Remove parameters from the URL, as set by the error callback from the
   // OAuth2 authorization service, to clean up the URL.
   // location.search = '';
@@ -84,11 +60,11 @@ function handleError(code, description) {
 }
 
 /**
- * Handles errors in case they were returned by the OAuth2
- * authorization service.
+ * Handles errors in case they were returned by the OAuth2 authorization
+ * service.
  */
 function catchError() {
-  const params = queryStringParser(history.location.search);
+  const params = queryStringParser(location.search);
   if (params && params.error) {
     handleError(params.error, params.error_description);
   }
@@ -104,46 +80,18 @@ function getAccessToken() {
 }
 
 /**
- * Redirects to the OAuth2 authorization service.
- */
-function login() {
-  // Make sure we start the login process only once
-  if (logingIn) {
-    return;
-  }
-
-  logingIn = true;
-  // Get the URI the OAuth2 authorization service needs to use as
-  // callback
-  const callback = `${location.protocol}//${location.host}/`;
-  // Get a random string to prevent CSRF
-  const stateToken = encodeURIComponent(stateTokenGenerator());
-
-  if (!stateToken) {
-    throw new Error('crypto library is not available on the current browser');
-  }
-
-  // Save current location in session
-  sessionStorage.setItem(CALLBACK_LOCATION, JSON.stringify(history.location));
-  // Save the state token in session
-  sessionStorage.setItem(STATE_TOKEN, stateToken);
-
-  location.href =
-    `${API_ROOT}${AUTH_PATH}&state=${stateToken}&redirect_uri=${encodeURIComponent(callback)}`;
-}
-
-/**
- * Do the given params form a callback from the OAuth2 authorization
- * service?
+ * Returns the access token from the params specified.
+ *
+ * Only does so in case the params form a valid callback from the OAuth2
+ * authorization service.
  *
  * @param {Object.<string, string>} params The parameters returned.
- * @return boolean True when all `AUTH_PARAMS` are available and the
- * `state` param equals to the value set in the session storage,
- * otherwise false.
+ * @return {string} The access token in case the params for a valid callback,
+ * null otherwise.
  */
-function isCallback(params) {
+function getAccessTokenFromParams(params) {
   if (!params) {
-    return false;
+    return null;
   }
 
   const stateToken = sessionStorage.getItem(STATE_TOKEN);
@@ -164,54 +112,71 @@ function isCallback(params) {
     throw new Error(`Authenticator encountered an invalid state token (${params.state})`);
   }
 
-  return Boolean(stateTokenValid && paramsValid);
+  return stateTokenValid && paramsValid ? params.access_token : null;
 }
 
 /**
- * Finishes the callback from the OAuth2 authorization service.
- *
- * @param {string} token The access token.
- */
-function useAccessToken(token) {
-  sessionStorage.setItem(ACCESS_TOKEN, token);
-  sessionStorage.removeItem(STATE_TOKEN);
-  restorePath(); // Restore path from session
-}
-
-/**
- * Gets the access token in case we have a valid callback. Uses the
- * authorization parameters from the access token.
- *
- * @returns boolean True when this is a callback, otherwise false.
+ * Gets the access token and return path, and clears the session storage.
  */
 function handleCallback() {
-  const params = queryStringParser(history.location.hash);
-  if (isCallback(params)) {
-    useAccessToken(params.access_token);
-    return true;
+  const params = queryStringParser(location.hash);
+  const accessToken = getAccessTokenFromParams(params);
+  if (accessToken) {
+    sessionStorage.setItem(ACCESS_TOKEN, accessToken);
+    returnPath = sessionStorage.getItem(RETURN_PATH);
+    sessionStorage.removeItem(RETURN_PATH);
+    sessionStorage.removeItem(STATE_TOKEN);
   }
-  return false;
+}
+
+/**
+ * Redirects to the OAuth2 authorization service.
+ */
+export function login() {
+  // Get the URI the OAuth2 authorization service needs to use as callback
+  const callback = encodeURIComponent(`${location.protocol}//${location.host}/`);
+  // Get a random string to prevent CSRF
+  const stateToken = encodeURIComponent(stateTokenGenerator());
+
+  if (!stateToken) {
+    throw new Error('crypto library is not available on the current browser');
+  }
+
+  sessionStorage.removeItem(ACCESS_TOKEN);
+  sessionStorage.setItem(RETURN_PATH, location.pathname);
+  sessionStorage.setItem(STATE_TOKEN, stateToken);
+
+  location.href = `${API_ROOT}${AUTH_PATH}&state=${stateToken}&redirect_uri=${callback}`;
 }
 
 /**
  * Initializes the auth service when needed. Catches any callback params and
  * errors from the OAuth2 authorization service when available.
  *
- * Retrieves the access token and returns it. When not available it initiates
- * the login process which will redirect the user to the OAuth2 authorization
- * service.
+ * When no access token is available it initiates the login process which will
+ * redirect the user to the OAuth2 authorization service.
  *
- * @returns {string} The access token when available;
  */
-export default function (hist) {
-  history = hist;
+export function initAuth() {
   if (!initialized) {
     initialized = true;
     catchError(); // Catch any error from the OAuth2 authorization service
     handleCallback(); // Handle a callback from the OAuth2 authorization service
   }
-  return getAccessToken() || // Restore access token from session storage
+
+  if (!getAccessToken()) {
     login(); // Initiate login process when there is no access token
+  }
+}
+
+/**
+ * Gets the return path that was saved before the login process was initiated.
+ *
+ * @returns {string} The return path where we moved away from when the login
+ * process was initiated.
+ */
+export function getReturnPath() {
+  return returnPath;
 }
 
 /**

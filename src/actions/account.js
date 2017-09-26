@@ -1,6 +1,6 @@
 import { push } from 'react-router-redux';
 import { getAuthHeaders } from '../services/auth/auth';
-import handleApiError from '../services/handle-api-error/handle-api-error';
+import checkAuthStatus from '../services/check-auth-status/check-auth-status';
 
 export const CREATE_ACCOUNT_SUCCESS = 'CREATE_ACCOUNT_SUCCESS';
 export const FETCH_ACCOUNTS_SUCCESS = 'FETCH_ACCOUNTS_SUCCESS';
@@ -49,10 +49,10 @@ export function fetchAccountsSuccess(accounts) {
   };
 }
 
-export function fetchAccounts(history) {
+export function fetchAccounts() {
   return (dispatch) => { // eslint-disable-line
     return fetch(`${apiUrl}?embed=item`, { headers: getAuthHeaders() })
-      .then(handleApiError(history))
+      .then(checkAuthStatus())
       .then(response => response.json())
       .then(response => response._embedded.item)
       .then(response => response.map(account => ({

@@ -1,5 +1,5 @@
 import { getAuthHeaders } from '../services/auth/auth';
-import handleApiError from '../services/handle-api-error/handle-api-error';
+import checkAuthStatus from '../services/check-auth-status/check-auth-status';
 
 export const FETCH_ROLES_SUCCESS = 'FETCH_ROLES_SUCCESS';
 
@@ -12,10 +12,10 @@ export function fetchRolesSuccess(roles) {
   };
 }
 
-export function fetchRoles(history) {
+export function fetchRoles() {
   return (dispatch) => { // eslint-disable-line
     return fetch(apiUrl, { headers: getAuthHeaders() })
-      .then(handleApiError(history))
+      .then(checkAuthStatus())
       .then(response => response.json())
       .then(response => response._links.item)
       .then(roles => dispatch(fetchRolesSuccess(roles)))
