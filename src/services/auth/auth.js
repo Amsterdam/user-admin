@@ -149,6 +149,11 @@ export function login() {
   location.href = `${API_ROOT}${AUTH_PATH}&state=${stateToken}&redirect_uri=${callback}`;
 }
 
+export function logout() {
+  sessionStorage.removeItem(ACCESS_TOKEN);
+  location.reload();
+}
+
 /**
  * Initializes the auth service when needed. Catches any callback params and
  * errors from the OAuth2 authorization service when available.
