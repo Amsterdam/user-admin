@@ -2,17 +2,32 @@ import { push } from 'react-router-redux';
 import { getAuthHeaders } from '../services/auth/auth';
 import checkAuthStatus from '../services/check-auth-status/check-auth-status';
 
-export const CREATE_ACCOUNT_SUCCESS = 'CREATE_ACCOUNT_SUCCESS';
+export const FETCH_ACCOUNT_SUCCESS = 'FETCH_ACCOUNT_SUCCESS';
 export const FETCH_ACCOUNTS_SUCCESS = 'FETCH_ACCOUNTS_SUCCESS';
 export const REMOVE_ACCOUNT_SUCCESS = 'REMOVE_ACCOUNT_SUCCESS';
-export const UPDATE_ACCOUNT_SUCCESS = 'UPDATE_ACCOUNT_SUCCESS';
 
 const apiUrl = 'https://acc.api.data.amsterdam.nl/authz_admin/accounts';
 
-export function createAccountSuccess(account) {
+export function fetchAccountSuccess(account) {
   return {
-    type: CREATE_ACCOUNT_SUCCESS,
+    type: FETCH_ACCOUNT_SUCCESS,
     account
+  };
+}
+
+export function fetchAccount(account) {
+  return (dispatch) => { // eslint-disable-line
+    return fetch(`${apiUrl}/${account.emailAddress}`, { headers: getAuthHeaders() })
+      .then(checkAuthStatus())
+      .then(response => response.json())
+      .then(response => ({
+        etag: response._etag,
+        emailAddress: response._links.self.name,
+        name: response._links.self.title,
+        roles: response._links.role
+      }))
+      .then(response => dispatch(fetchAccountSuccess(response)))
+      .catch((error) => { throw error; });
   };
 }
 
@@ -33,7 +48,7 @@ export function createAccount(account) {
         'If-None-Match': '*'
       }
     })
-      .then(() => dispatch(createAccountSuccess(account)))
+      .then(() => dispatch(fetchAccount(account)))
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
         dispatch(push('/accounts'));
@@ -56,19 +71,13 @@ export function fetchAccounts() {
       .then(response => response.json())
       .then(response => response._embedded.item)
       .then(response => response.map(account => ({
+        etag: account._etag,
         emailAddress: account._links.self.name,
         name: account._links.self.title,
         roles: account._links.role
       })))
       .then(accounts => dispatch(fetchAccountsSuccess(accounts)))
       .catch((error) => { throw error; });
-  };
-}
-
-export function updateAccountSuccess(account) {
-  return {
-    type: UPDATE_ACCOUNT_SUCCESS,
-    account
   };
 }
 
@@ -86,10 +95,10 @@ export function updateAccount(account) {
       headers: {
         ...getAuthHeaders(),
         'Content-Type': 'application/hal+json',
-        'If-Match': '*'
+        'If-Match': account.etag
       }
     })
-      .then(() => dispatch(updateAccountSuccess(account)))
+      .then(() => dispatch(fetchAccount(account)))
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
         dispatch(push('/accounts'));
@@ -111,14 +120,12 @@ export function removeAccount(account) {
       method: 'DELETE',
       headers: {
         ...getAuthHeaders(),
-        'If-Match': '*'
+        'If-Match': account.etag
       }
     })
       .then(() => dispatch(removeAccountSuccess(account)))
       .then(() => {
         // TODO: Find alternative approach letting the container handle this
-        // TODO: Use a more consistent approach compared to other actions
-        dispatch(fetchAccounts());
         dispatch(push('/accounts'));
       })
       .catch((error) => { throw error; });

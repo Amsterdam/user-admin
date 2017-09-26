@@ -1,15 +1,14 @@
 import {
-  CREATE_ACCOUNT_SUCCESS,
+  FETCH_ACCOUNT_SUCCESS,
   FETCH_ACCOUNTS_SUCCESS,
-  REMOVE_ACCOUNT_SUCCESS,
-  UPDATE_ACCOUNT_SUCCESS
+  REMOVE_ACCOUNT_SUCCESS
 } from '../actions/account';
 
 const initialState = [];
 
 export default function (state = initialState, action) {
   switch (action.type) {
-    case CREATE_ACCOUNT_SUCCESS:
+    case FETCH_ACCOUNT_SUCCESS:
       return [
         ...state.filter(account => account.emailAddress !== action.account.emailAddress),
         Object.assign({}, action.account)
@@ -17,10 +16,7 @@ export default function (state = initialState, action) {
     case FETCH_ACCOUNTS_SUCCESS:
       return [...action.accounts];
     case REMOVE_ACCOUNT_SUCCESS:
-      return state.filter(account => account.id !== action.account.emailAddress);
-    case UPDATE_ACCOUNT_SUCCESS:
-      return state.map(account => Object.assign({}, account,
-        (account.emailAddress === action.account.emailAddress ? action.account : account)));
+      return state.filter(account => account.emailAddress !== action.account.emailAddress);
     default:
       return state;
   }

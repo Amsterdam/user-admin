@@ -9,6 +9,7 @@ class AccountDetail extends React.Component {
 
     // NB: Setting state of nested objects, i.e. `{ account: { name: '' } }`, is not supported
     this.state = {
+      etag: props.account.etag || '',
       emailAddress: props.account.emailAddress || '',
       name: props.account.name || '',
       // NB: Set all roles directly on the state
@@ -30,6 +31,7 @@ class AccountDetail extends React.Component {
     }
 
     this.setState({
+      etag: nextProps.account.etag,
       emailAddress: nextProps.account.emailAddress,
       name: nextProps.account.name,
       // NB: Set all roles directly on the state
@@ -53,6 +55,7 @@ class AccountDetail extends React.Component {
     event.preventDefault();
 
     const account = {
+      etag: this.state.etag,
       emailAddress: this.state.emailAddress,
       name: this.state.name,
       // NB: Reverse mapping of roles directly to the state
@@ -121,6 +124,7 @@ AccountDetail.defaultProps = {
 
 AccountDetail.propTypes = {
   account: PropTypes.shape({
+    etag: PropTypes.string,
     emailAddress: PropTypes.string,
     name: PropTypes.string,
     roles: PropTypes.array
