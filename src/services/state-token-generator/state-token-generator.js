@@ -1,6 +1,6 @@
 /**
  * Generates a string of 16 random Ascii characters using the native
- * `crypto` library and `window.btoa`.
+ * `crypto` library and `btoa`.
  *
  * For IE11 it uses the prefixed `msCrypto` library. In case no crypto
  * library exists in the current environment an empty string will be
@@ -11,16 +11,17 @@
  */
 export default function () {
   // Backwards compatible with msCrypto in IE11
-  const crypto = window.crypto || window.msCrypto;
+  const cryptoLib = crypto ||
+    msCrypto; // eslint-disable-line no-undef
 
-  if (!crypto) {
+  if (!cryptoLib) {
     return '';
   }
 
   // Create an array of 16 8-bit unsigned integers
   const list = new Uint8Array(16);
   // Populate the array with random values
-  crypto.getRandomValues(list);
+  cryptoLib.getRandomValues(list);
 
   // Binary to Ascii (btoa) converts our (character representation
   // of) our binary data to an Ascii string

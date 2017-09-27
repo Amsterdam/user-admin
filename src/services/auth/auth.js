@@ -40,7 +40,6 @@ const STATE_TOKEN = 'stateToken';
 // containing user scopes and name
 const ACCESS_TOKEN = 'accessToken';
 
-let initialized = false;
 let returnPath;
 
 /**
@@ -136,7 +135,8 @@ export function login() {
   // Get the URI the OAuth2 authorization service needs to use as callback
   const callback = encodeURIComponent(`${location.protocol}//${location.host}/`);
   // Get a random string to prevent CSRF
-  const stateToken = encodeURIComponent(stateTokenGenerator());
+  const stateToken = stateTokenGenerator();
+  const encodedStateToken = encodeURIComponent(stateToken);
 
   if (!stateToken) {
     throw new Error('crypto library is not available on the current browser');
@@ -146,7 +146,7 @@ export function login() {
   sessionStorage.setItem(RETURN_PATH, location.pathname);
   sessionStorage.setItem(STATE_TOKEN, stateToken);
 
-  location.href = `${API_ROOT}${AUTH_PATH}&state=${stateToken}&redirect_uri=${callback}`;
+  location.href = `${API_ROOT}${AUTH_PATH}&state=${encodedStateToken}&redirect_uri=${callback}`;
 }
 
 export function logout() {
@@ -163,11 +163,9 @@ export function logout() {
  *
  */
 export function initAuth() {
-  if (!initialized) {
-    initialized = true;
-    catchError(); // Catch any error from the OAuth2 authorization service
-    handleCallback(); // Handle a callback from the OAuth2 authorization service
-  }
+  returnPath = '';
+  catchError(); // Catch any error from the OAuth2 authorization service
+  handleCallback(); // Handle a callback from the OAuth2 authorization service
 
   if (!getAccessToken()) {
     login(); // Initiate login process when there is no access token
