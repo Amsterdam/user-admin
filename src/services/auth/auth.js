@@ -21,7 +21,7 @@ const ERROR_MESSAGES = {
 // success
 const AUTH_PARAMS = ['access_token', 'token_type', 'expires_in', 'state'];
 
-const API_ROOT = 'https://acc.api.data.amsterdam.nl/';
+const API_ROOT = `https://${process.env.NODE_ENV !== 'production' ? 'acc.' : ''}api.data.amsterdam.nl/`;
 
 // The URI we need to redirect to for communication with the OAuth2
 // authorization service
