@@ -3,7 +3,7 @@ import checkAuthStatus from '../services/check-auth-status/check-auth-status';
 
 export const FETCH_ROLES_SUCCESS = 'FETCH_ROLES_SUCCESS';
 
-const apiUrl = 'https://acc.api.data.amsterdam.nl/authz_admin/roles';
+const apiUrl = `https://${process.env.NODE_ENV !== 'production' ? 'acc.' : ''}api.data.amsterdam.nl/authz_admin/roles`;
 
 export function fetchRolesSuccess(roles) {
   return {

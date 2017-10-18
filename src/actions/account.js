@@ -6,7 +6,7 @@ export const FETCH_ACCOUNT_SUCCESS = 'FETCH_ACCOUNT_SUCCESS';
 export const FETCH_ACCOUNTS_SUCCESS = 'FETCH_ACCOUNTS_SUCCESS';
 export const REMOVE_ACCOUNT_SUCCESS = 'REMOVE_ACCOUNT_SUCCESS';
 
-const apiUrl = 'https://acc.api.data.amsterdam.nl/authz_admin/accounts';
+const apiUrl = `https://${process.env.NODE_ENV !== 'production' ? 'acc.' : ''}api.data.amsterdam.nl/authz_admin/accounts`;
 
 export function fetchAccountSuccess(account) {
   return {
