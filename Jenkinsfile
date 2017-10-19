@@ -67,7 +67,7 @@ if (BRANCH == "master") {
     node {
         stage("Build production image") {
             tryStep "build", {
-                def image = docker.build("build.datapunt.amsterdam.nl:5000/atlas/user_admin:${env.BUILD_NUMBER}", ". --build-arg NODE_ENV=production")
+                def image = docker.build("build.datapunt.amsterdam.nl:5000/atlas/user_admin:${env.BUILD_NUMBER}", "--build-arg NODE_ENV=production .")
                 image.push("prodcution")
                 image.push("lastest")
             }
