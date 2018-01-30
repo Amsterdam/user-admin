@@ -42,11 +42,11 @@ export function createAccount(account) {
         name: account.emailAddress,
         title: account.name
       }),
-      headers: {
+      headers: new Headers({
         ...getAuthHeaders(),
         'Content-Type': 'application/hal+json',
         'If-None-Match': '*'
-      }
+      })
     })
       .then(() => dispatch(fetchAccount(account)))
       .then(() => {
@@ -92,11 +92,11 @@ export function updateAccount(account) {
         name: account.emailAddress,
         title: account.name
       }),
-      headers: {
+      headers: new Headers({
         ...getAuthHeaders(),
         'Content-Type': 'application/hal+json',
         'If-Match': account.etag
-      }
+      })
     })
       .then(() => dispatch(fetchAccount(account)))
       .then(() => {
@@ -118,10 +118,10 @@ export function removeAccount(account) {
   return (dispatch) => { // eslint-disable-line
     return fetch(`${apiUrl}/${account.emailAddress}`, {
       method: 'DELETE',
-      headers: {
+      headers: new Headers({
         ...getAuthHeaders(),
         'If-Match': account.etag
-      }
+      })
     })
       .then(() => dispatch(removeAccountSuccess(account)))
       .then(() => {
