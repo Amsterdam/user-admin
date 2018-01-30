@@ -188,6 +188,9 @@ export function getReturnPath() {
  *
  * @returns {Object<string, string>} The headers needed for an API call.
  */
-export function getAuthHeaders() {
-  return new Headers({ Authorization: `Bearer ${getAccessToken()}` });
+export function getAuthHeaders(additionalHeaders = {}) {
+  return new Headers({
+    ...additionalHeaders,
+    Authorization: `Bearer ${getAccessToken()}`
+  });
 }
