@@ -35,7 +35,7 @@ const AccountsContainer = props => (
     />
     <Route
       exact
-      path="/accounts/:id(\S+@\S+)"
+      path="/accounts/:id(\S+)"
       render={() => (
         <AccountDetail
           account={props.account}
