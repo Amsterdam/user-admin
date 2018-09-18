@@ -1,14 +1,20 @@
-jest.mock('../query-string-parser/query-string-parser');
-jest.mock('../state-token-generator/state-token-generator');
 
 import { initAuth, login, logout, getReturnPath, getAuthHeaders } from './auth';
 import queryStringParser from '../query-string-parser/query-string-parser';
 import stateTokenGenerator from '../state-token-generator/state-token-generator';
 
+jest.mock('../query-string-parser/query-string-parser');
+jest.mock('../state-token-generator/state-token-generator');
+
 describe('The auth service', () => {
-  let origSessionStorage, origLocation, origHeaders;
-  let queryObject, stateToken;
-  let savedStateToken, savedReturnPath, savedAccessToken;
+  let origSessionStorage;
+  let origHeaders;
+  let origLocation;
+  let queryObject;
+  let stateToken;
+  let savedStateToken;
+  let savedReturnPath;
+  let savedAccessToken;
 
   beforeEach(() => {
     origSessionStorage = global.sessionStorage;
@@ -23,7 +29,6 @@ describe('The auth service', () => {
         case 'returnPath':
           return savedReturnPath;
         default:
-          return;
       }
     });
     global.sessionStorage.setItem = jest.fn();
@@ -65,8 +70,8 @@ describe('The auth service', () => {
         expect(() => {
           initAuth();
         }).toThrow('Authorization service responded with error invalid_request [invalid request] ' +
-            '(The request is missing a required parameter, includes an invalid parameter value, ' +
-            'includes a parameter more than once, or is otherwise malformed.)');
+          '(The request is missing a required parameter, includes an invalid parameter value, ' +
+          'includes a parameter more than once, or is otherwise malformed.)');
         expect(queryStringParser).toHaveBeenCalledWith(queryString);
       });
 
@@ -128,7 +133,7 @@ describe('The auth service', () => {
 
         expect(() => {
           initAuth();
-        }).toThrow('Authenticator encountered an invalid state token (invalidStateToken)')
+        }).toThrow('Authenticator encountered an invalid state token (invalidStateToken)');
         expect(queryStringParser).toHaveBeenCalledWith(queryString);
       });
 

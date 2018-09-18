@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Route } from 'react-router';
+import { Switch, Route } from 'react-router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => bindActionCreators({
 }, dispatch);
 
 const AccountsContainer = props => (
-  <section>
+  <Switch>
     <Route
       exact
       path="/accounts"
@@ -30,6 +30,16 @@ const AccountsContainer = props => (
         <AccountList
           accounts={props.accounts}
           onRemove={props.onRemove}
+        />
+      )}
+    />
+    <Route
+      exact
+      path="/accounts/new"
+      render={() => (
+        <AccountDetail
+          onCreate={props.onCreate}
+          roles={props.roles}
         />
       )}
     />
@@ -44,17 +54,7 @@ const AccountsContainer = props => (
         />
       )}
     />
-    <Route
-      exact
-      path="/accounts/new"
-      render={() => (
-        <AccountDetail
-          onCreate={props.onCreate}
-          roles={props.roles}
-        />
-      )}
-    />
-  </section>
+  </Switch>
 );
 
 AccountsContainer.defaultProps = {
