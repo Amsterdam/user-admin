@@ -1,9 +1,9 @@
-jest.mock('../auth/auth');
-
 import checkAuthStatus from './check-auth-status';
 import { login } from '../auth/auth';
 
-describe('The check auth status service', function () {
+jest.mock('../auth/auth');
+
+describe('The check auth status service', () => {
   it('returns a function that returns the response unchanged when ok', () => {
     const response = { ok: true };
     expect(
