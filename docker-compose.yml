@@ -1,4 +1,4 @@
 useradmin:
   build: .
   ports:
-    - "8121:80"
+    - "3000:80"
