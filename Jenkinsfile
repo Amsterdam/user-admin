@@ -24,8 +24,10 @@ node {
 
     stage("Build image") {
         tryStep "build", {
-            def image = docker.build("repo.data.amsterdam.nl/atlas/user_admin:${env.BUILD_NUMBER}")
+                docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
+            def image = docker.build("atlas/user_admin:${env.BUILD_NUMBER}")
             image.push()
+            }
         }
     }
 }
@@ -37,9 +39,11 @@ if (BRANCH == "master") {
     node {
         stage('Push acceptance image') {
             tryStep "image tagging", {
-                def image = docker.image("repo.data.amsterdam.nl/atlas/user_admin:${env.BUILD_NUMBER}")
+                docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
+                def image = docker.image("atlas/user_admin:${env.BUILD_NUMBER}")
                 image.pull()
                 image.push("acceptance")
+                }
             }
         }
     }
@@ -67,9 +71,11 @@ if (BRANCH == "master") {
     node {
         stage("Build production image") {
             tryStep "build", {
-                def image = docker.build("repo.data.amsterdam.nl/atlas/user_admin:${env.BUILD_NUMBER}", "--build-arg NODE_ENV=production .")
+                docker.withRegistry("${DOCKER_REGISTRY_HOST}",'docker_registry_auth') {
+                def image = docker.build("atlas/user_admin:${env.BUILD_NUMBER}", "--build-arg NODE_ENV=production .")
                 image.push("production")
-                image.push("lastest")
+                image.push("latest")
+                }
             }
         }
     }
