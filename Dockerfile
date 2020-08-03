@@ -4,7 +4,6 @@ FROM node:10.10 as builder
   COPY . /app/
   RUN git config --global url."https://".insteadOf git:// && \
     git config --global url."https://github.com/".insteadOf git@github.com: && \
-    npm config set registry https://nexus.data.amsterdam.nl/repository/npm-group/ && \
     npm --production=false \
         --unsafe-perm \
         --verbose \
